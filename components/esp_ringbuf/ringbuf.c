@@ -812,6 +812,18 @@ BaseType_t xRingbufferSendFromISR(RingbufHandle_t xRingbuffer, const void *pvIte
         return pdTRUE;      //Sending 0 bytes to byte buffer has no effect
     }
 
+    /* FIXME: This is temporary WA */
+    uint8_t *tmpPtr = pvItem;
+    if( ( tmpPtr[0] == 0x00 ) && ( tmpPtr[1] == 0xFF ) && ( tmpPtr[2] == 0x07 ) )
+    {
+        return pdFALSE;
+    }
+
+    if ( *((uint32_t *)pvItem) == 0x300000D0 )
+    {
+        return pdFALSE;
+    }
+
     //Attempt to send an item
     BaseType_t xReturn;
     BaseType_t xReturnSemaphore = pdFALSE;
